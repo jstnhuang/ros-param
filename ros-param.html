@@ -1,0 +1,130 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../ros-websocket/ros-websocket.html">
+
+<dom-module id="ros-param">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+
+  <script>
+    /**
+     * `<ros-param>`
+     * A Polymer element for working with ROS Parameters
+     *
+     * NOTE: this element only works with string parameters.
+     *
+     * Example:
+     * 
+     *     <ros-websocket auto id="ros" ros="{{ros}}"></ros-websocket>
+     *     <ros-param ros="[[ros]]" name="test_param" string-val="{{val}}"></ros-param>
+     *
+     * Unlike with `<ros-topic>`, the value of `stringVal` does NOT automatically update when the
+     * parameter value changes on the parameter server. `stringVal` is only updated when the name
+     * is initialized or changed, or when you call `get`.
+     *
+     * You can imperatively get, set, or delete a param using the provided methods:
+     *
+     *     <ros-websocket auto id="ros" ros="{{ros}}"></ros-websocket>
+     *     <ros-param id="param" ros="[[ros]]" name="test_param" string-val="{{val}}"></ros-param>
+     *     this.$.param.get(function(val) {
+     *       console.log(val);
+     *     });
+     *     this.$.param.set("Hello world!");
+     *     this.$.param.delete();
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class RosParam extends Polymer.Element {
+      static get is() { return 'ros-param'; }
+      static get properties() {
+        return {
+          /** The `ros` object from `<ros-websocket>` */
+          ros: {
+            type: Object,
+          },
+          /** The name of the parameter, e.g., "amcl/base_frame_id" */
+          name: {
+            type: String,
+          },
+          /** The value of the parameter, as a string. */
+          stringVal: {
+            type: String,
+            notify: true,
+            observer: '_stringValChanged'
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_init(ros, name)',
+        ];
+      }
+
+      _init(ros, name) {
+        if (ros && name) {
+          this._param = new ROSLIB.Param({
+            ros: ros,
+            name: name
+          });
+          var that = this;
+          this._param.get(function(val) {
+            that.stringVal = val;
+          });
+        }
+      }
+
+      /**
+       * Gets the value of the parameter.
+       * @param {function(string)} f A callback function that will be called with the parameter
+       *   value as the only argument.
+       */
+      get(f) {
+        if (this._param) {
+          var that = this;
+          this._param.get(function(val) {
+            that.stringVal = val;
+            f(val);
+          });
+        } else {
+          console.warn('Param is not initialized');
+        }
+      }
+
+      /**
+       * Sets the value of the parameter.
+       * @param {string} val The value to set to the parameter to.
+       */
+      set(val) {
+        this.stringVal = val;
+      }
+
+      /**
+       * Deletes this parameter from the parameter server.
+       */
+      delete() {
+        if (this._param) {
+          this._param.delete();
+        } else {
+          console.warn('Param is not initialized');
+        }
+      }
+
+      _stringValChanged(val) {
+        if (this._param) {
+          this._param.set(val);
+        } else {
+          console.warn('Param is not initialized');
+        }
+      }
+    }
+
+    window.customElements.define(RosParam.is, RosParam);
+  </script>
+</dom-module>

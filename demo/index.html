@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>ros-param demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../ros-websocket/ros-websocket.html">
+    <link rel="import" href="../ros-param.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic ros-param demo</h3>
+      <p>Be sure to run a websocket server: <code>roslaunch rosbridge_server rosbridge_websocket.launch</code></p>
+      <p>Then you can use <code>rosparam get</code> and <code>rosparam set</code> to test out the element's functionality with the <code>/test_param</code> param.</p>
+      <demo-snippet>
+        <template>
+          <dom-bind id="demo">
+            <template>
+              <paper-input label="test_param" always-float-label value="{{val}}"></paper-input>
+              <paper-button id="deleteButton">Delete</paper-button>
+              <ros-websocket auto id="ros" ros="{{ros}}"></ros-websocket>
+              <ros-param ros="[[ros]]" id="param" name="test_param" string-val="{{val}}"></ros-param>
+            </template>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+    </div>
+    <script>
+      var demo = document.querySelector('#demo');
+      var rosElement = demo.$.ros;
+      rosElement.addEventListener('connection', function() {
+        console.log('Connected to the websocket server.');
+      });
+      rosElement.addEventListener('error', function(error) {
+        console.log('Error connecting to the websocket server:', error);
+      });
+      rosElement.addEventListener('close', function() {
+        console.log('Connection to websocket server closed.');
+      });
+      demo.$.deleteButton.addEventListener('tap', function() {
+        demo.$.param.delete();
+      });
+    </script>
+
+  </body>
+</html>
