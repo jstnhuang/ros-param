@@ -1,21 +1,13 @@
-# \<ros-param\>
+# \<ros-topic\>
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/jstnhuang/ros-param)
 
-A Polymer element for working with ROS Parameters
+A Polymer element for ROS topics in roslibjs.
+This element only supports Polymer 2.
 
-## Install the Polymer-CLI
+- [Documentation](https://www.webcomponents.org/element/jstnhuang/ros-param/elements/ros-param)
+- [Demo](https://www.webcomponents.org/element/jstnhuang/ros-param/demo/demo/index.html).
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your element locally.
-
-## Viewing Your Element
-
+To install:
 ```
-$ polymer serve
+bower install --save jstnhuang/ros-param
 ```
-
-## Running Tests
-
-```
-$ polymer test
-```
-
-Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). Run `polymer test` to run your application's test suite locally.
